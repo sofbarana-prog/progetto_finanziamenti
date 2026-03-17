@@ -307,7 +307,7 @@
     }));
 
     if (wantedCluster) {
-      out = out.filter(c => !c.cluster_num || c.cluster_num === wantedCluster);
+      out = out.filter(c => c.cluster_num === wantedCluster);
     }
 
     if (wantedAction) {
