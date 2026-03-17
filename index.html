@@ -419,9 +419,9 @@
       };
     });
 
-    if (wantedCluster) {
-      out = out.filter(c => c._cluster_norm === wantedCluster);
-    }
+   if (wantedCluster) {
+  out = out.filter(c => String(c.cluster_num || '') === wantedCluster);
+}
 
     if (wantedAction) {
       out = out.filter(c => {
