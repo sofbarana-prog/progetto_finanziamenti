@@ -265,12 +265,10 @@
   let CALLS = [];
 
   async function loadCalls(){
-    // Modalità 1: dataset incorporato direttamente nella pagina
     if (Array.isArray(window.CALLS_DATA)) {
       return window.CALLS_DATA;
     }
 
-    // Modalità 2: file calls.json nella stessa cartella
     try {
       const res = await fetch('./calls.json', { cache: 'no-store' });
       const data = await res.json();
@@ -302,7 +300,7 @@
     return '';
   }
 
-  function quarterCutoff(year, quarter){
+  function projectEndDate(year, quarter){
     if(!year || !quarter) return null;
     const map = {
       Q1: `${year}-03-31`,
@@ -310,7 +308,7 @@
       Q3: `${year}-09-30`,
       Q4: `${year}-12-31`
     };
-    return new Date(map[quarter]);
+    return new Date(map[quarter] + 'T23:59:59');
   }
 
   function parseLooseDate(s){
@@ -340,7 +338,7 @@
 
     const wantedCluster = clusterNumFromSelect(answers.horizon_cluster);
     const wantedBeneficiary = partnerTypeToBeneficiary(answers.partner_type);
-    const cutoff = quarterCutoff(answers.closure_year, answers.closure_quarter);
+    const projectEnd = projectEndDate(answers.closure_year, answers.closure_quarter);
     const wantedAction = answers.action_type || '';
 
     if (wantedCluster && call.cluster_num === wantedCluster) {
@@ -376,9 +374,11 @@
       score += 5;
     }
 
-    if (cutoff && call.deadline) {
+    // LOGICA CORRETTA:
+    // la deadline della call deve essere DOPO la fine del progetto
+    if (projectEnd && call.deadline) {
       const deadline = parseLooseDate(call.deadline);
-      if (deadline && deadline <= cutoff) {
+      if (deadline && deadline > projectEnd) {
         score += 15;
       }
     }
@@ -389,6 +389,7 @@
   function filterCalls(answers){
     const wantedCluster = clusterNumFromSelect(answers.horizon_cluster);
     const wantedAction = answers.action_type || '';
+    const projectEnd = projectEndDate(answers.closure_year, answers.closure_quarter);
 
     let out = CALLS.map(c => ({
       ...c,
@@ -406,6 +407,17 @@
           return !action || !['IA','RIA','CSA','COFUND'].includes(action);
         }
         return action === wantedAction;
+      });
+    }
+
+    // FILTRO VERO SULLE DATE:
+    // escludi tutte le call con deadline <= fine progetto
+    if (projectEnd) {
+      out = out.filter(c => {
+        if (!c.deadline) return false;
+        const deadline = parseLooseDate(c.deadline);
+        if (!deadline) return false;
+        return deadline > projectEnd;
       });
     }
 
