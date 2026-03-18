@@ -353,8 +353,7 @@
 
   function normalizeAction(v) {
     const s = String(v || '').trim().toUpperCase();
-    if (!s) return '';
-    return s;
+    return s || '';
   }
 
   function partnerTypeToBeneficiary(v) {
@@ -417,18 +416,32 @@
     const wantedAction = answers.action_type || '';
     const projectEnd = projectEndIso(answers.closure_year, answers.closure_quarter);
 
-    const callOfficial = normalizeCluster(call.cluster_num);
     const callThematic = String(call.thematic_cluster || '').trim();
+    const callOfficial = normalizeCluster(call.cluster_num);
     const callAction = normalizeAction(call.action);
+    const deadlineIso = call.deadline_iso || fallbackIsoFromDeadline(call.deadline);
 
+    // Match tematico
     if (wantedThematic && callThematic === wantedThematic) {
-      score += 60;
+      score += 50;
     }
 
+    // Match cluster ufficiale
     if (wantedOfficial && callOfficial === wantedOfficial) {
+      score += 30;
+    }
+
+    // Bonus se matchano entrambi
+    if (
+      wantedThematic &&
+      wantedOfficial &&
+      callThematic === wantedThematic &&
+      callOfficial === wantedOfficial
+    ) {
       score += 40;
     }
 
+    // Tipo di azione
     if (wantedAction) {
       if (wantedAction === 'OTHER') {
         if (!callAction || !['IA', 'RIA', 'CSA', 'COFUND'].includes(callAction)) {
@@ -439,6 +452,7 @@
       }
     }
 
+    // Natura progetto
     if (answers.project_nature === 'basic') {
       if (callAction === 'RIA') score += 20;
       if (callAction === 'CSA') score += 10;
@@ -449,17 +463,19 @@
       if (callAction === 'IA') score += 20;
     }
 
+    // Beneficiario
     if (wantedBeneficiary && Array.isArray(call.beneficiary_hint)) {
       if (call.beneficiary_hint.includes(wantedBeneficiary)) {
         score += 15;
       }
     }
 
+    // Altri schemi
     if (answers.other_schemes === 'no') {
       score += 5;
     }
 
-    const deadlineIso = call.deadline_iso || fallbackIsoFromDeadline(call.deadline);
+    // Timeline
     if (projectEnd && deadlineIso && deadlineIso > projectEnd) {
       score += 15;
     }
@@ -485,14 +501,7 @@
       };
     });
 
-    if (wantedThematic) {
-      out = out.filter(c => c._thematic_cluster_norm === wantedThematic);
-    }
-
-    if (wantedOfficial) {
-      out = out.filter(c => c._official_cluster_norm === wantedOfficial);
-    }
-
+    // Tipo di azione: filtro vero
     if (wantedAction) {
       out = out.filter(c => {
         if (wantedAction === 'OTHER') {
@@ -502,6 +511,7 @@
       });
     }
 
+    // Timeline: filtro vero
     if (projectEnd) {
       out = out.filter(c => {
         if (!c._deadline_iso_norm) return false;
@@ -509,8 +519,24 @@
       });
     }
 
+    // Se selezioni thematic e/o official, non facciamo un AND rigido.
+    // Manteniamo le call rilevanti per almeno uno dei due e ordiniamo con punteggio.
+    if (wantedThematic || wantedOfficial) {
+      out = out.filter(c => {
+        const thematicMatch = wantedThematic ? c._thematic_cluster_norm === wantedThematic : false;
+        const officialMatch = wantedOfficial ? c._official_cluster_norm === wantedOfficial : false;
+
+        if (wantedThematic && wantedOfficial) {
+          return thematicMatch || officialMatch;
+        }
+        if (wantedThematic) return thematicMatch;
+        if (wantedOfficial) return officialMatch;
+        return true;
+      });
+    }
+
     out = out
-      .filter(c => c._score > 0)
+      .filter(c => c._score >= 30)
       .sort((a, b) => {
         if (b._score !== a._score) return b._score - a._score;
         return (a._deadline_iso_norm || '').localeCompare(b._deadline_iso_norm || '');
@@ -541,7 +567,7 @@
     }
 
     html += `<div class="box muted">
-      Il filtro confronta la data di fine progetto con la deadline della call. Vengono mostrate solo call con scadenza successiva alla fine del progetto.
+      Se selezioni sia un cluster tematico sia un cluster Horizon ufficiale, il tool dà priorità alle call che matchano entrambi, ma include anche quelle rilevanti per uno dei due criteri.
     </div>`;
 
     html += `<h2 style="margin-top:14px;">Call suggerite</h2>`;
