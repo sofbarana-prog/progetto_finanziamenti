@@ -193,7 +193,7 @@
   <div class="page">
     <h1>Questionario Progetto — Funding Call Matcher</h1>
     <p class="intro">
-      Questo strumento suggerisce call coerenti con il profilo del progetto, utilizzando sia i cluster ufficiali di Horizon Europe sia cluster tematici trasversali.
+      Questo strumento suggerisce call coerenti con il profilo del progetto utilizzando cluster tematici trasversali e, opzionalmente, i cluster ufficiali di Horizon Europe.
     </p>
 
     <form id="survey">
@@ -421,27 +421,27 @@
     const callAction = normalizeAction(call.action);
     const deadlineIso = call.deadline_iso || fallbackIsoFromDeadline(call.deadline);
 
-    // Match tematico
+    // thematic cluster = criterio principale
     if (wantedThematic && callThematic === wantedThematic) {
-      score += 50;
+      score += 60;
     }
 
-    // Match cluster ufficiale
+    // official cluster = bonus, non esclusione
     if (wantedOfficial && callOfficial === wantedOfficial) {
-      score += 30;
+      score += 25;
     }
 
-    // Bonus se matchano entrambi
+    // bonus extra se matchano entrambi
     if (
       wantedThematic &&
       wantedOfficial &&
       callThematic === wantedThematic &&
       callOfficial === wantedOfficial
     ) {
-      score += 40;
+      score += 25;
     }
 
-    // Tipo di azione
+    // type of action
     if (wantedAction) {
       if (wantedAction === 'OTHER') {
         if (!callAction || !['IA', 'RIA', 'CSA', 'COFUND'].includes(callAction)) {
@@ -452,7 +452,7 @@
       }
     }
 
-    // Natura progetto
+    // project nature
     if (answers.project_nature === 'basic') {
       if (callAction === 'RIA') score += 20;
       if (callAction === 'CSA') score += 10;
@@ -463,19 +463,19 @@
       if (callAction === 'IA') score += 20;
     }
 
-    // Beneficiario
+    // beneficiary
     if (wantedBeneficiary && Array.isArray(call.beneficiary_hint)) {
       if (call.beneficiary_hint.includes(wantedBeneficiary)) {
         score += 15;
       }
     }
 
-    // Altri schemi
+    // other schemes
     if (answers.other_schemes === 'no') {
       score += 5;
     }
 
-    // Timeline
+    // timeline
     if (projectEnd && deadlineIso && deadlineIso > projectEnd) {
       score += 15;
     }
@@ -485,7 +485,6 @@
 
   function filterCalls(answers) {
     const wantedThematic = answers.thematic_cluster || '';
-    const wantedOfficial = normalizeCluster(answers.official_cluster);
     const wantedAction = answers.action_type || '';
     const projectEnd = projectEndIso(answers.closure_year, answers.closure_quarter);
 
@@ -501,7 +500,12 @@
       };
     });
 
-    // Tipo di azione: filtro vero
+    // thematic cluster = filtro principale
+    if (wantedThematic) {
+      out = out.filter(c => c._thematic_cluster_norm === wantedThematic);
+    }
+
+    // type of action = filtro vero
     if (wantedAction) {
       out = out.filter(c => {
         if (wantedAction === 'OTHER') {
@@ -511,7 +515,7 @@
       });
     }
 
-    // Timeline: filtro vero
+    // timeline = filtro vero
     if (projectEnd) {
       out = out.filter(c => {
         if (!c._deadline_iso_norm) return false;
@@ -519,24 +523,9 @@
       });
     }
 
-    // Se selezioni thematic e/o official, non facciamo un AND rigido.
-    // Manteniamo le call rilevanti per almeno uno dei due e ordiniamo con punteggio.
-    if (wantedThematic || wantedOfficial) {
-      out = out.filter(c => {
-        const thematicMatch = wantedThematic ? c._thematic_cluster_norm === wantedThematic : false;
-        const officialMatch = wantedOfficial ? c._official_cluster_norm === wantedOfficial : false;
-
-        if (wantedThematic && wantedOfficial) {
-          return thematicMatch || officialMatch;
-        }
-        if (wantedThematic) return thematicMatch;
-        if (wantedOfficial) return officialMatch;
-        return true;
-      });
-    }
-
+    // ranking
     out = out
-      .filter(c => c._score >= 30)
+      .filter(c => c._score >= 20)
       .sort((a, b) => {
         if (b._score !== a._score) return b._score - a._score;
         return (a._deadline_iso_norm || '').localeCompare(b._deadline_iso_norm || '');
@@ -567,7 +556,7 @@
     }
 
     html += `<div class="box muted">
-      Se selezioni sia un cluster tematico sia un cluster Horizon ufficiale, il tool dà priorità alle call che matchano entrambi, ma include anche quelle rilevanti per uno dei due criteri.
+      Il cluster tematico è il criterio principale. Il cluster Horizon ufficiale, se selezionato, serve solo a dare priorità ai risultati Horizon coerenti, senza escludere call di altri programmi come Digital Europe, CREA o AGRIP.
     </div>`;
 
     html += `<h2 style="margin-top:14px;">Call suggerite</h2>`;
