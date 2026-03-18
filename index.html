@@ -3,19 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Questionario Progetto — Tool call</title>
+  <title>Questionario Progetto — Funding Call Matcher</title>
   <style>
     :root {
-      --max-width: 1100px;
+      --max-width: 1120px;
       --gap: 12px;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --border: #e6e6e6;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --secondary: #6b7280;
+      --soft: #f3f4f6;
       font-family: system-ui, Arial, sans-serif;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 24px;
       display: flex;
       justify-content: center;
-      background: #fafafa;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .page {
@@ -24,15 +35,22 @@
     }
 
     h1 {
-      margin: 0 0 12px 0;
+      margin: 0 0 10px 0;
+      font-size: 1.8rem;
+    }
+
+    .intro {
+      color: var(--muted);
+      margin: 0 0 18px 0;
+      line-height: 1.45;
     }
 
     fieldset {
-      border: 1px solid #e6e6e6;
+      border: 1px solid var(--border);
       padding: 16px;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 14px;
-      background: #fff;
+      background: var(--card);
     }
 
     legend {
@@ -55,16 +73,16 @@
 
     select {
       width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #cfcfcf;
+      border-radius: 10px;
       background: white;
+      font-size: 0.97rem;
     }
 
     .radio {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
       margin-top: 8px;
     }
@@ -77,18 +95,27 @@
       align-items: center;
     }
 
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     button {
       padding: 10px 14px;
       border-radius: 10px;
       border: 0;
-      background: #2b7cff;
+      background: var(--primary);
       color: white;
       font-weight: 700;
       cursor: pointer;
+      font-size: 0.95rem;
     }
 
     .secondary {
-      background: #777;
+      background: var(--secondary);
     }
 
     .box {
@@ -110,28 +137,34 @@
       background: white;
     }
 
+    .results {
+      margin-top: 18px;
+    }
+
     .call {
-      border: 1px solid #eee;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 10px;
+      border: 1px solid #ececec;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
       background: white;
     }
 
     .call h3 {
-      margin: 0 0 6px 0;
-      font-size: 1rem;
+      margin: 0 0 8px 0;
+      font-size: 1.02rem;
+      line-height: 1.35;
     }
 
     .meta {
       color: #555;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       margin-top: 6px;
       word-break: break-word;
+      line-height: 1.45;
     }
 
     .muted {
-      color: #666;
+      color: var(--muted);
       font-size: 0.9rem;
     }
 
@@ -139,13 +172,17 @@
       color: #b30000;
     }
 
+    .small {
+      font-size: 0.88rem;
+    }
+
     footer {
-      margin-top: 18px;
-      color: #666;
+      margin-top: 20px;
+      color: var(--muted);
       font-size: 0.9rem;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 760px) {
       .row {
         grid-template-columns: 1fr;
       }
@@ -154,7 +191,10 @@
 </head>
 <body>
   <div class="page">
-    <h1>Questionario Progetto — Tool call</h1>
+    <h1>Questionario Progetto — Funding Call Matcher</h1>
+    <p class="intro">
+      Questo strumento suggerisce call coerenti con il profilo del progetto, utilizzando sia i cluster ufficiali di Horizon Europe sia cluster tematici trasversali.
+    </p>
 
     <form id="survey">
       <fieldset>
@@ -167,6 +207,8 @@
               <option value="2026">2026</option>
               <option value="2027">2027</option>
               <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
             </select>
           </div>
 
@@ -192,21 +234,39 @@
           <label><input type="radio" name="project_nature" value="applied"> Applied research</label>
           <label><input type="radio" name="project_nature" value="industrial"> Industrial research</label>
         </div>
+      </fieldset>
 
-        <label for="horizon_cluster">Cluster di Horizon Europe</label>
-        <select id="horizon_cluster" name="horizon_cluster" required>
+      <fieldset>
+        <legend>3) Cluster tematico</legend>
+        <label for="thematic_cluster">Area tematica principale</label>
+        <select id="thematic_cluster" name="thematic_cluster" required>
           <option value="" selected disabled>Seleziona…</option>
-          <option>Cluster 1: Health</option>
-          <option>Cluster 2: Culture, Creativity and Inclusive Society</option>
-          <option>Cluster 3: Civil Security for Society</option>
-          <option>Cluster 4: Digital, Industry and Space</option>
-          <option>Cluster 5: Climate, Energy and Mobility</option>
-          <option>Cluster 6: Food, Bioeconomy, Natural Resources, Agriculture and Environment</option>
+          <option value="Health & Life Sciences">Health & Life Sciences</option>
+          <option value="Culture, Creativity & Inclusion">Culture, Creativity & Inclusion</option>
+          <option value="Security & Resilience">Security & Resilience</option>
+          <option value="Digital, Industry & Space">Digital, Industry & Space</option>
+          <option value="Climate, Energy & Mobility">Climate, Energy & Mobility</option>
+          <option value="Food, Bioeconomy & Environment">Food, Bioeconomy & Environment</option>
+          <option value="Defence">Defence</option>
+          <option value="SME, Entrepreneurship & Market Uptake">SME, Entrepreneurship & Market Uptake</option>
+          <option value="External Action & International Cooperation">External Action & International Cooperation</option>
+          <option value="Cross-cutting / Other">Cross-cutting / Other</option>
+        </select>
+
+        <label for="official_cluster" style="margin-top:14px;">Cluster Horizon Europe ufficiale (opzionale)</label>
+        <select id="official_cluster" name="official_cluster">
+          <option value="">Qualsiasi / non applicabile</option>
+          <option value="1">Cluster 1: Health</option>
+          <option value="2">Cluster 2: Culture, Creativity and Inclusive Society</option>
+          <option value="3">Cluster 3: Civil Security for Society</option>
+          <option value="4">Cluster 4: Digital, Industry and Space</option>
+          <option value="5">Cluster 5: Climate, Energy and Mobility</option>
+          <option value="6">Cluster 6: Food, Bioeconomy, Natural Resources, Agriculture and Environment</option>
         </select>
       </fieldset>
 
       <fieldset>
-        <legend>3) Tipo di azione</legend>
+        <legend>4) Tipo di azione</legend>
         <label for="action_type">Seleziona il tipo di azione</label>
         <select id="action_type" name="action_type">
           <option value="">Qualsiasi</option>
@@ -219,7 +279,7 @@
       </fieldset>
 
       <fieldset>
-        <legend>4) Beneficiario di altri schemi</legend>
+        <legend>5) Beneficiario di altri schemi</legend>
         <label for="other_schemes">Il progetto è già beneficiario di altri schemi?</label>
         <select id="other_schemes" name="other_schemes" required>
           <option value="" selected disabled>Seleziona…</option>
@@ -229,7 +289,7 @@
       </fieldset>
 
       <fieldset>
-        <legend>5) Tipologia partner</legend>
+        <legend>6) Tipologia partner</legend>
         <label for="partner_type">Partner principale / tipologia</label>
         <select id="partner_type" name="partner_type" required>
           <option value="" selected disabled>Seleziona…</option>
@@ -239,28 +299,28 @@
         </select>
       </fieldset>
 
-      <div style="display:flex; gap:12px; margin-top:8px; align-items:center;">
+      <div class="actions">
         <button type="submit">Genera suggerimento call</button>
         <button type="button" id="resetBtn" class="secondary">Pulisci</button>
       </div>
     </form>
 
-    <section id="results" style="margin-top:18px;"></section>
+    <section id="results" class="results" aria-live="polite"></section>
 
     <footer>
-      Per pubblicarlo online, carica questo file insieme a <code>calls.json</code>.
+      Il tool usa <code>calls.json</code>. Per pubblicarlo online è sufficiente caricare questo file HTML e il JSON su GitHub Pages, Netlify o Vercel.
     </footer>
   </div>
 
 <script>
-(async function(){
+(async function () {
   const form = document.getElementById('survey');
   const results = document.getElementById('results');
   const resetBtn = document.getElementById('resetBtn');
 
   let CALLS = [];
 
-  async function loadCalls(){
+  async function loadCalls() {
     if (Array.isArray(window.CALLS_DATA)) {
       return window.CALLS_DATA;
     }
@@ -277,33 +337,35 @@
 
   CALLS = await loadCalls();
 
-  function escapeHtml(s){
-    if(!s) return '';
+  function escapeHtml(s) {
+    if (!s) return '';
     return String(s).replace(/[&<>"']/g, m => (
       {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
     ));
   }
 
-  function normalizeCluster(v){
+  function normalizeCluster(v) {
     if (v === null || v === undefined) return '';
     const s = String(v).trim();
     const m = s.match(/(\d+)/);
     return m ? m[1] : '';
   }
 
-  function clusterNumFromSelect(v){
-    return normalizeCluster(v);
+  function normalizeAction(v) {
+    const s = String(v || '').trim().toUpperCase();
+    if (!s) return '';
+    return s;
   }
 
-  function partnerTypeToBeneficiary(v){
-    if(v === 'research') return 'Research organisation';
-    if(v === 'sme') return 'SME';
-    if(v === 'large') return 'Large enterprise';
+  function partnerTypeToBeneficiary(v) {
+    if (v === 'research') return 'Research organisation';
+    if (v === 'sme') return 'SME';
+    if (v === 'large') return 'Large enterprise';
     return '';
   }
 
-  function projectEndIso(year, quarter){
-    if(!year || !quarter) return '';
+  function projectEndIso(year, quarter) {
+    if (!year || !quarter) return '';
     const map = {
       Q1: `${year}-03-31`,
       Q2: `${year}-06-30`,
@@ -313,14 +375,14 @@
     return map[quarter] || '';
   }
 
-  function parseLooseDate(s){
-    if(!s) return null;
+  function parseLooseDate(s) {
+    if (!s) return null;
 
-    let d = new Date(s);
-    if(!isNaN(d)) return d;
+    const d = new Date(s);
+    if (!isNaN(d)) return d;
 
     const m = String(s).match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
-    if(m){
+    if (m) {
       const months = {
         january:0,february:1,march:2,april:3,may:4,june:5,
         july:6,august:7,september:8,october:9,november:10,december:11
@@ -328,53 +390,68 @@
       const day = parseInt(m[1], 10);
       const month = months[m[2].toLowerCase()];
       const year = parseInt(m[3], 10);
-      if(month !== undefined){
+      if (month !== undefined) {
         return new Date(year, month, day);
       }
     }
+
     return null;
   }
 
-  function scoreCall(call, answers){
+  function fallbackIsoFromDeadline(deadline) {
+    if (!deadline) return '';
+    const parsed = parseLooseDate(deadline);
+    if (!parsed) return '';
+    const yyyy = parsed.getFullYear();
+    const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+    const dd = String(parsed.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function scoreCall(call, answers) {
     let score = 0;
 
-    const wantedCluster = normalizeCluster(answers.horizon_cluster);
+    const wantedThematic = answers.thematic_cluster || '';
+    const wantedOfficial = normalizeCluster(answers.official_cluster);
     const wantedBeneficiary = partnerTypeToBeneficiary(answers.partner_type);
-    const projectEnd = projectEndIso(answers.closure_year, answers.closure_quarter);
     const wantedAction = answers.action_type || '';
+    const projectEnd = projectEndIso(answers.closure_year, answers.closure_quarter);
 
-    const callCluster =
-      normalizeCluster(call.cluster_num) ||
-      normalizeCluster(call.cluster_label) ||
-      normalizeCluster(call.programme_raw) ||
-      normalizeCluster(call.name);
+    const callOfficial = normalizeCluster(call.cluster_num);
+    const callThematic = String(call.thematic_cluster || '').trim();
+    const callAction = normalizeAction(call.action);
 
-    if (wantedCluster && callCluster === wantedCluster) {
-      score += 50;
+    if (wantedThematic && callThematic === wantedThematic) {
+      score += 60;
+    }
+
+    if (wantedOfficial && callOfficial === wantedOfficial) {
+      score += 40;
     }
 
     if (wantedAction) {
-      const action = (call.action || '').toUpperCase();
       if (wantedAction === 'OTHER') {
-        if (!action || !['IA','RIA','CSA','COFUND'].includes(action)) score += 40;
-      } else if (action === wantedAction) {
-        score += 40;
+        if (!callAction || !['IA', 'RIA', 'CSA', 'COFUND'].includes(callAction)) {
+          score += 35;
+        }
+      } else if (callAction === wantedAction) {
+        score += 35;
       }
     }
 
     if (answers.project_nature === 'basic') {
-      if (call.action === 'RIA') score += 30;
-      if (call.action === 'CSA') score += 20;
+      if (callAction === 'RIA') score += 20;
+      if (callAction === 'CSA') score += 10;
     } else if (answers.project_nature === 'applied') {
-      if (call.action === 'RIA') score += 20;
-      if (call.action === 'IA') score += 20;
+      if (callAction === 'RIA') score += 15;
+      if (callAction === 'IA') score += 15;
     } else if (answers.project_nature === 'industrial') {
-      if (call.action === 'IA') score += 30;
+      if (callAction === 'IA') score += 20;
     }
 
     if (wantedBeneficiary && Array.isArray(call.beneficiary_hint)) {
       if (call.beneficiary_hint.includes(wantedBeneficiary)) {
-        score += 20;
+        score += 15;
       }
     }
 
@@ -382,93 +459,72 @@
       score += 5;
     }
 
-    if (projectEnd) {
-      if (call.deadline_iso) {
-        if (call.deadline_iso > projectEnd) score += 15;
-      } else if (call.deadline) {
-        const parsed = parseLooseDate(call.deadline);
-        if (parsed) {
-          const yyyy = parsed.getFullYear();
-          const mm = String(parsed.getMonth() + 1).padStart(2, '0');
-          const dd = String(parsed.getDate()).padStart(2, '0');
-          const fallbackIso = `${yyyy}-${mm}-${dd}`;
-          if (fallbackIso > projectEnd) score += 15;
-        }
-      }
+    const deadlineIso = call.deadline_iso || fallbackIsoFromDeadline(call.deadline);
+    if (projectEnd && deadlineIso && deadlineIso > projectEnd) {
+      score += 15;
     }
 
     return score;
   }
 
-  function filterCalls(answers){
-    const wantedCluster = normalizeCluster(answers.horizon_cluster);
+  function filterCalls(answers) {
+    const wantedThematic = answers.thematic_cluster || '';
+    const wantedOfficial = normalizeCluster(answers.official_cluster);
     const wantedAction = answers.action_type || '';
     const projectEnd = projectEndIso(answers.closure_year, answers.closure_quarter);
 
-    let out = CALLS.map(c => {
-      const normalizedCluster =
-        normalizeCluster(c.cluster_num) ||
-        normalizeCluster(c.cluster_label) ||
-        normalizeCluster(c.programme_raw) ||
-        normalizeCluster(c.name);
-
+    let out = CALLS.map(call => {
+      const deadlineIso = call.deadline_iso || fallbackIsoFromDeadline(call.deadline);
       return {
-        ...c,
-        _cluster_norm: normalizedCluster,
-        _score: scoreCall(c, answers)
+        ...call,
+        _official_cluster_norm: normalizeCluster(call.cluster_num),
+        _thematic_cluster_norm: String(call.thematic_cluster || '').trim(),
+        _action_norm: normalizeAction(call.action),
+        _deadline_iso_norm: deadlineIso,
+        _score: scoreCall(call, answers)
       };
     });
 
-   if (wantedCluster) {
-  out = out.filter(c => String(c.cluster_num || '') === wantedCluster);
-}
+    if (wantedThematic) {
+      out = out.filter(c => c._thematic_cluster_norm === wantedThematic);
+    }
+
+    if (wantedOfficial) {
+      out = out.filter(c => c._official_cluster_norm === wantedOfficial);
+    }
 
     if (wantedAction) {
       out = out.filter(c => {
-        const action = (c.action || '').toUpperCase();
         if (wantedAction === 'OTHER') {
-          return !action || !['IA','RIA','CSA','COFUND'].includes(action);
+          return !c._action_norm || !['IA', 'RIA', 'CSA', 'COFUND'].includes(c._action_norm);
         }
-        return action === wantedAction;
+        return c._action_norm === wantedAction;
       });
     }
 
     if (projectEnd) {
       out = out.filter(c => {
-        if (c.deadline_iso) {
-          return c.deadline_iso > projectEnd;
-        }
-
-        if (c.deadline) {
-          const parsed = parseLooseDate(c.deadline);
-          if (parsed) {
-            const yyyy = parsed.getFullYear();
-            const mm = String(parsed.getMonth() + 1).padStart(2, '0');
-            const dd = String(parsed.getDate()).padStart(2, '0');
-            const fallbackIso = `${yyyy}-${mm}-${dd}`;
-            return fallbackIso > projectEnd;
-          }
-        }
-
-        return true;
+        if (!c._deadline_iso_norm) return false;
+        return c._deadline_iso_norm > projectEnd;
       });
     }
 
     out = out
-      .filter(c => c._score > 0 || wantedCluster || wantedAction || projectEnd)
+      .filter(c => c._score > 0)
       .sort((a, b) => {
         if (b._score !== a._score) return b._score - a._score;
-        return (a.deadline_iso || '').localeCompare(b.deadline_iso || '');
+        return (a._deadline_iso_norm || '').localeCompare(b._deadline_iso_norm || '');
       });
 
     return out.slice(0, 30);
   }
 
-  function renderResults(answers, filtered){
+  function renderResults(answers, filtered) {
     const pills = [
       `Chiusura: ${answers.closure_year || ''} ${answers.closure_quarter || ''}`,
       `Natura: ${answers.project_nature || ''}`,
-      `Cluster: ${answers.horizon_cluster || ''}`,
+      `Cluster tematico: ${answers.thematic_cluster || ''}`,
+      `Cluster Horizon: ${answers.official_cluster || 'Qualsiasi'}`,
       `Tipo di azione: ${answers.action_type || 'Qualsiasi'}`,
       `Altri schemi: ${answers.other_schemes || ''}`,
       `Partner: ${answers.partner_type || ''}`
@@ -478,14 +534,14 @@
 
     if (!CALLS.length) {
       html += `<div class="box error">
-        Non trovo dati da mostrare. Controlla che <code>calls.json</code> esista e sia aggiornato.
+        Non trovo dati da mostrare. Verifica che <code>calls.json</code> sia presente e aggiornato.
       </div>`;
       results.innerHTML = html;
       return;
     }
 
     html += `<div class="box muted">
-      Il filtro date usa <strong>deadline_iso</strong> quando presente, con fallback sulla data testuale.
+      Il filtro confronta la data di fine progetto con la deadline della call. Vengono mostrate solo call con scadenza successiva alla fine del progetto.
     </div>`;
 
     html += `<h2 style="margin-top:14px;">Call suggerite</h2>`;
@@ -499,26 +555,34 @@
     filtered.forEach(c => {
       const meta = [
         c.programme ? `Programme: ${c.programme}` : '',
+        c.thematic_cluster ? `Thematic cluster: ${c.thematic_cluster}` : '',
+        c.cluster_num ? `Official Horizon cluster: ${c.cluster_num}` : '',
         c.action ? `Type of action: ${c.action}` : '',
-        c.cluster_num ? `Cluster: ${c.cluster_num}` : '',
         c.opening ? `Opening: ${c.opening}` : '',
         c.deadline ? `Deadline: ${c.deadline}` : '',
         c.budget ? `Budget: ${c.budget}` : '',
         c.record_type ? `Record: ${c.record_type}` : ''
       ].filter(Boolean).join(' · ');
 
-      html += `<div class="call">
-        <h3>${escapeHtml(c.name || '(senza nome)')}</h3>
-        <div class="meta">${escapeHtml(meta)}</div>
-        ${c.url ? `<div class="meta">Link: <a href="${encodeURI(c.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.url)}</a></div>` : ''}
-      </div>`;
+      const why = [
+        c.thematic_cluster_reason ? `Classification basis: ${c.thematic_cluster_reason}` : ''
+      ].filter(Boolean).join(' · ');
+
+      html += `
+        <div class="call">
+          <h3>${escapeHtml(c.name || '(senza nome)')}</h3>
+          <div class="meta">${escapeHtml(meta)}</div>
+          ${why ? `<div class="meta muted small">${escapeHtml(why)}</div>` : ''}
+          ${c.url ? `<div class="meta">Link: <a href="${encodeURI(c.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.url)}</a></div>` : ''}
+        </div>
+      `;
     });
 
     results.innerHTML = html;
-    results.scrollIntoView({behavior:'smooth'});
+    results.scrollIntoView({ behavior: 'smooth' });
   }
 
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const fd = new FormData(form);
@@ -526,7 +590,8 @@
       closure_year: fd.get('closure_year'),
       closure_quarter: fd.get('closure_quarter'),
       project_nature: fd.get('project_nature'),
-      horizon_cluster: fd.get('horizon_cluster'),
+      thematic_cluster: fd.get('thematic_cluster'),
+      official_cluster: fd.get('official_cluster'),
       action_type: fd.get('action_type'),
       other_schemes: fd.get('other_schemes'),
       partner_type: fd.get('partner_type')
@@ -536,7 +601,7 @@
     renderResults(answers, filtered);
   });
 
-  resetBtn.addEventListener('click', function(){
+  resetBtn.addEventListener('click', function () {
     form.reset();
     results.innerHTML = '';
   });
