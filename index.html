@@ -524,7 +524,7 @@
         return (a._deadline_iso_norm || '').localeCompare(b._deadline_iso_norm || '');
       });
 
-    return out.slice(0, 30);
+    return out.slice(0, 200);
   }
 
   function renderResults(answers, filtered) {
