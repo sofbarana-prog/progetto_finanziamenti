@@ -336,7 +336,7 @@
       .sort((a,b) => b._score !== a._score
         ? b._score - a._score
         : (a._deadline_norm||'').localeCompare(b._deadline_norm||''))
-      .slice(0, 30);
+      .slice(0, 200);
   }
 
   function renderResults(answers, filtered) {
